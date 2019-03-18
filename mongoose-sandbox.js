@@ -10,8 +10,10 @@ db.on('error', (err) => {
   console.error("connection error:", err);
 });
 
-const errorCheck = (err, message) => {
-  if (err) console.error(message ? message + err : err);
+const listAnimals = animals => {
+  animals.forEach(animal => {
+    console.log(`${animal.name} the ${animal.size} ${animal.color} ${animal.type}`);
+  });
 }
 
 db.once('open', () => {
@@ -37,6 +39,18 @@ db.once('open', () => {
     }
     next();
   });
+
+  // static method to find animals by size
+  AnimalSchema.statics.findSize = function(size, callback) {
+    // this == Animal
+    return this.find({size: size}, callback);
+  };
+
+  // instance method to find animals of the same color as the current animal
+  AnimalSchema.methods.findSameColor = function(callback) {
+    // this == document
+    return this.model('Animal').find({color: this.color}, callback);
+  };
 
   // create a model
   const Animal = mongoose.model('Animal', AnimalSchema);
@@ -92,10 +106,17 @@ db.once('open', () => {
       await Animal.create(animalData);
       console.log('saved the animals');
 
-      // list all the animals
-      const animals = await Animal.find();
-      animals.forEach(animal => {
-        console.log(`${animal.name} the ${animal.size} ${animal.color} ${animal.type}`);
+      // list all the medium animals
+      console.log('Medium Animals:');
+      const animals = await Animal.findSize('medium');
+      listAnimals(animals);
+
+      // list the animals with the same color as the elephant
+      console.log('Elephant colors:');
+      await Animal.findOne({type: 'goldfish'}, async (err, animal) => {
+        await animal.findSameColor((err, output) => {
+          listAnimals(output);
+        });
       });
 
       // close the database
