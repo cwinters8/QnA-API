@@ -102,7 +102,7 @@ db.once('open', () => {
       db.close();
       console.log('db connection closed');
     } catch (err) {
-      console.log(err);
+      console.error(err);
       db.close()
     }
   };
