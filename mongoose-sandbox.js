@@ -22,17 +22,16 @@ db.once('open', () => {
     type:  {type: String, default: 'goldfish'},
     color: {type: String, default: 'golden'},
     name:  {type: String, default: 'Angela'},
-    size:  {type: String, default: 'small'},
+    size:  String,
     mass:  {type: Number, default: 0.007}
   });
 
   // create a model
   const Animal = mongoose.model('Animal', AnimalSchema);
 
-  // create a document
+  // create documents
   const elephant = new Animal({
     type: 'elephant',
-    size: 'big',
     color: 'grey',
     mass: 6000,
     name: 'Lawrence' 
@@ -43,18 +42,32 @@ db.once('open', () => {
   const whale = new Animal({
     name: 'Wally',
     type: 'whale',
-    size: 'big',
     mass: 190500
-  })
+  });
 
-  // using promises and `then` clauses
-  // Animal.deleteMany()
-  //   .then(() => elephant.save())
-  //   .then(() => console.log('Saved elephant'))
-  //   .then(() => animal.save())
-  //   .then(() => console.log('Saved goldfish'))
-  //   .then(() => db.close(() => console.log('db connection closed')))
-  //   .catch(err => console.error(err));
+  const animalData = [
+    {
+      type: 'mouse',
+      color: 'grey',
+      mass: 0.035,
+      name: 'Marvin'
+    },
+    {
+      type: 'nutria',
+      color: 'brown',
+      mass: 6.35,
+      name: 'Gretchen'
+    },
+    {
+      type: 'wolf',
+      color: 'grey',
+      mass: 45,
+      name: 'Iris'
+    },
+    elephant,
+    animal,
+    whale
+  ];
 
   // using async/await
   async function run () {
@@ -64,14 +77,13 @@ db.once('open', () => {
       console.log('deleted successfully');
 
       // save the animals
-      await Promise.all([elephant.save(), animal.save(), whale.save()]);
+      await Animal.create(animalData);
       console.log('saved the animals');
 
-      // list all the big animals
-      await Animal.find({size: 'big'}, (err, results) => {
-        results.forEach(animal => {
-          console.log(`${animal.name} the ${animal.color} ${animal.type}`);
-        });
+      // list all the animals
+      const animals = await Animal.find();
+      animals.forEach(animal => {
+        console.log(`${animal.name} the ${animal.color} ${animal.type}`);
       });
 
       // close the database
