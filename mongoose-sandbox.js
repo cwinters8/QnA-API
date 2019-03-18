@@ -26,6 +26,18 @@ db.once('open', () => {
     mass:  {type: Number, default: 0.007}
   });
 
+  // pre-hook middleware
+  AnimalSchema.pre('save', function (next) {
+    if (this.mass >= 100) {
+      this.size = 'big';
+    } else if (this.mass >= 5 && this.mass < 100) {
+      this.size = 'medium';
+    } else {
+      this.size = 'small';
+    }
+    next();
+  });
+
   // create a model
   const Animal = mongoose.model('Animal', AnimalSchema);
 
@@ -83,7 +95,7 @@ db.once('open', () => {
       // list all the animals
       const animals = await Animal.find();
       animals.forEach(animal => {
-        console.log(`${animal.name} the ${animal.color} ${animal.type}`);
+        console.log(`${animal.name} the ${animal.size} ${animal.color} ${animal.type}`);
       });
 
       // close the database
