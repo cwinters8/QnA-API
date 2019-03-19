@@ -1,12 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const Question = require('./models').Question;
 
 'use strict';
 
 // GET /questions
 // Route for questions collection
-router.get('/', (req, res) => {
-  // return all the questions
+router.get('/', (req, res, next) => {
+  // return all the questions, sorted in descending order
+  Question.find({}, null, {sort: {createdAt: -1}}, (err, questions) => { //null is for projection placeholder
+    if (err) return next(err);
+    res.json(questions);
+  });
   res.json({response: "You sent me a GET request"});
 });
 
