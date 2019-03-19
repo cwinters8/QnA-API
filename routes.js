@@ -8,11 +8,18 @@ const Question = require('./models').Question;
 // Route for questions collection
 router.get('/', (req, res, next) => {
   // return all the questions, sorted in descending order
-  Question.find({}, null, {sort: {createdAt: -1}}, (err, questions) => { //null is for projection placeholder
-    if (err) return next(err);
-    res.json(questions);
-  });
+  Question.find({})
+    .sort({createdAt: -1})
+    .exec((err, questions) => {
+      if (err) return next(err);
+      res.json(questions);
+    });
 });
+
+(err, questions) => {
+  if (err) return next(err);
+  res.json(questions);
+}
 
 // POST /questions
 // Route for creating questions
