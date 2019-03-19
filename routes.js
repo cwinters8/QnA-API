@@ -18,12 +18,14 @@ router.get('/', (req, res, next) => {
 
 // POST /questions
 // Route for creating questions
-router.post('/', (req, res) => {
-  res.json({
-    response: "You sent me a POST request",
-    body: req.body
+router.post('/', (req, res, next) => {
+  const question = new Question(req.body);
+  question.save((err, question) => {
+    if (err) return next(err);
+    res.status(200);
+    res.json(question);
   });
-})
+});
 
 // GET /questions/:qID
 // Route for specific questions
