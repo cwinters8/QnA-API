@@ -1,6 +1,7 @@
 const express = require('express');
 const jsonParser = require('body-parser').json;
 const logger = require('morgan');
+const mongoose = require('mongoose');
 
 const routes = require('./routes');
 
@@ -11,6 +12,18 @@ const app = express();
 // middleware
 app.use(logger('dev'));
 app.use(jsonParser());
+
+// database
+mongoose.connect('mongodb://localhost:27017/qa', {useNewUrlParser: true});
+const db = mongoose.connection;
+db.on('error', (err) => {
+  console.error("connection error:", err);
+});
+db.once('open', () => {
+  console.log('DB connection successful');
+});
+
+// router
 app.use("/questions", routes);
 
 // catch 404 errors and pass to error handler

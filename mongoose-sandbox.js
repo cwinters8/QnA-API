@@ -112,7 +112,7 @@ db.once('open', () => {
       listAnimals(animals);
 
       // list the animals with the same color as the elephant
-      console.log('Elephant colors:');
+      console.log('Similar colors:');
       await Animal.findOne({type: 'goldfish'}, async (err, animal) => {
         await animal.findSameColor((err, output) => {
           listAnimals(output);
