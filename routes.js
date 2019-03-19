@@ -29,9 +29,10 @@ router.post('/', (req, res, next) => {
 
 // GET /questions/:qID
 // Route for specific questions
-router.get('/:qID', (req,res) => {
-  res.json({
-    response: `You sent me a GET request for ID ${req.params.qID}`
+router.get('/:qID', (req, res, next) => {
+  Question.findById(req.params.qID, (err, doc) => {
+    if (err) return next(err);
+    res.json(doc);
   });
 });
 
