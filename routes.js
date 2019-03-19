@@ -16,11 +16,6 @@ router.get('/', (req, res, next) => {
     });
 });
 
-(err, questions) => {
-  if (err) return next(err);
-  res.json(questions);
-}
-
 // POST /questions
 // Route for creating questions
 router.post('/', (req, res) => {
