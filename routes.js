@@ -12,7 +12,6 @@ router.get('/', (req, res, next) => {
     if (err) return next(err);
     res.json(questions);
   });
-  res.json({response: "You sent me a GET request"});
 });
 
 // POST /questions

@@ -37,7 +37,7 @@ AnswerSchema.method('vote', function(vote, callback) {
 const QuestionSchema = new Schema({
   text: String,
   createdAt: {type: Date, default: Date.now},
-  answers = [AnswerSchema]
+  answers: [AnswerSchema]
 });
 
 // pre-save hook to order answers
