@@ -4,6 +4,20 @@ const Question = require('./models').Question;
 
 'use strict';
 
+// run when a question ID param is present
+router.param('qID', (req, res, next, id) => {
+  Question.findById(id, (err, doc) => {
+    if (err) return next(err);
+    if (!doc) {
+      err = new Error('Not Found');
+      err.status = 404;
+      return next(err);
+    }
+    req.question = doc;
+    next();
+  });
+});
+
 // GET /questions
 // Route for questions collection
 router.get('/', (req, res, next) => {
@@ -30,10 +44,7 @@ router.post('/', (req, res, next) => {
 // GET /questions/:qID
 // Route for specific questions
 router.get('/:qID', (req, res, next) => {
-  Question.findById(req.params.qID, (err, doc) => {
-    if (err) return next(err);
-    res.json(doc);
-  });
+  res.json(req.question);
 });
 
 // POST /questions/:qID/answers
