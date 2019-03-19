@@ -97,14 +97,13 @@ router.post('/:qID/answers/:aID/vote-:dir', (req, res, next) => {
     err.status = 404;
     next(err);
   } else {
+    req.vote = req.params.dir;
     next();
   }
-},(req, res) => {
-  res.json({
-    response: 'You sent me a POST request to /vote-' + req.params.dir,
-    questionId: req.params.qID,
-    answerId: req.params.aID,
-    vote: req.params.dir
+},(req, res, next) => {
+  req.answer.vote(req.vote, (err, question) => {
+    if (err) return next(err);
+    res.json(question);
   });
 });
 
