@@ -4,7 +4,7 @@ const Question = require('./models').Question;
 
 'use strict';
 
-// run when a question ID param is present
+// preload question docs - run when a question ID param is present
 router.param('qID', (req, res, next, id) => {
   Question.findById(id, (err, doc) => {
     if (err) return next(err);
@@ -16,6 +16,16 @@ router.param('qID', (req, res, next, id) => {
     req.question = doc;
     next();
   });
+});
+
+router.param('aID', (req, res, next, id) => {
+  req.answer = req.question.answers.id(id);
+  if (!req.answer) {
+    err = new Error('Not Found');
+    err.status = 404;
+    return next(err);
+  }
+  next();
 });
 
 // GET /questions
@@ -61,11 +71,9 @@ router.post('/:qID/answers', (req, res, next) => {
 // PUT /questions/:qID/answers/:aID
 // Route for updating an answer
 router.put('/:qID/answers/:aID', (req, res) => {
-  res.json({
-    response: 'You sent me a PUT request to /answers',
-    questionId: req.params.qID,
-    answerId: req.params.aID,
-    body: req.body
+  req.answer.update(req.body, (err, results) => {
+    if (err) return next(err);
+    res.json(results);
   });
 });
 
