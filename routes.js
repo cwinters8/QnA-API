@@ -36,7 +36,7 @@ router.post('/', (req, res, next) => {
   const question = new Question(req.body);
   question.save((err, question) => {
     if (err) return next(err);
-    res.status(200);
+    res.status(201);
     res.json(question);
   });
 });
@@ -49,11 +49,12 @@ router.get('/:qID', (req, res, next) => {
 
 // POST /questions/:qID/answers
 // Route for creating answers
-router.post('/:qID/answers', (req, res) => {
-  res.json({
-    response: 'You sent me a POST request to /answers',
-    questionId: req.params.qID,
-    body: req.body
+router.post('/:qID/answers', (req, res, next) => {
+  req.question.answers.push(req.body);
+  req.question.save((err, question) => {
+    if (err) return next(err);
+    res.status(201);
+    res.json(question);
   });
 });
 
